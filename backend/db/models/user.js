@@ -7,8 +7,8 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-   
-     toSafeObject() {
+
+    toSafeObject() {
       const { id, username, email, firstName, lastName } = this; // context will be the User instance
       return { id, username, email, firstName, lastName };
     };
@@ -65,7 +65,7 @@ module.exports = (sequelize, DataTypes) => {
 
     }
   };
-  
+
   User.init({
     username: {
       type: DataTypes.STRING,
@@ -117,9 +117,19 @@ module.exports = (sequelize, DataTypes) => {
         },
         loginUser: {
           attributes: {}
+        },
+        artistIncluded: {
+          attributes: {
+            exclude: ['updatedAt', 'createdAt', 'hashedPassword',
+              'email', 'firstName', 'lastName']
+          }
+        },
+        includedInComment: {
+          attributes: {
+            exclude: ['updatedAt', 'createdAt', 'hashedPassword', 'email', 'firstName', 'lastName', 'previewImage']
+          }
         }
       }
-    }
-  );
+    });
   return User;
 };

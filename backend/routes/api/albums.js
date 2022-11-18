@@ -33,6 +33,30 @@ router.get('/current', requireAuth, async (req, res) => {
     return res.json(myAlbums)
 });
 
+//get all albums of an artist from an id
+
+router.get('/:albumId', async(req, res, next) => {
+    const { albumId } = req.params;
+
+    const album = await Album.findByPk(albumId, {
+        include: [
+            { model: Song }
+        ]
+    });
+
+    if(album){
+        const artist = await User.scope('includedArtist').findByPk(album.userId);
+        album.dataValues.Artist = artist
+        return res.json(album)
+    }else{
+        const e = new Error();
+        e.message = "Artist couldn't be found.";
+        e.status = 404;
+        return next(e)
+    }
+});
+
+
 
 
 

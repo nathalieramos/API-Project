@@ -11,10 +11,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Album.hasMany(models.Song, {
-        foreignKey: "albumId"
+        foreignKey: "albumId",
+        onDelete: 'CASCADE',
+        hooks: true
       });
       Album.belongsTo(models.User, {
-        foreignKey: "userId"
+        foreignKey: "userId",
+        onDelete: 'CASCADE'
       });
     }
   };
@@ -27,6 +30,13 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Album',
+    scopes: {
+      albumScope: {
+        attributes: {
+          exclude: ['description', 'userId', 'createdAt', 'updatedAt']
+        }
+      }
+    }
   });
   return Album;
 };

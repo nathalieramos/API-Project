@@ -19,8 +19,12 @@ router.post('/', requireAuth, async(req, res) => {
     return res.json(createAlbum)
 });
 
-// //get all albums
-
+//get all albums
+router.get('/', async (req, res) =>{
+    const albums = await Album.findAll()
+    res.json({Albums: albums})
+  })
+  
 
 
 

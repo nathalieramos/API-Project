@@ -24,7 +24,14 @@ router.get('/', async (req, res) =>{
     const albums = await Album.findAll()
     res.json({Albums: albums})
   })
-  
+
+// get all albums of current user
+router.get('/current', requireAuth, async (req, res) => {
+    const myAlbums = await Album.findAll({
+      where: { userId: req.user.id },
+    });
+    return res.json(myAlbums)
+});
 
 
 
@@ -39,4 +46,4 @@ router.get('/', async (req, res) =>{
 
 
 
-module.exports = router
+module.exports = router;

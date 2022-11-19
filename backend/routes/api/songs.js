@@ -23,15 +23,23 @@ const songCouldNotBeFound = (next) => {
     next(e)
 }
 
+const validateComment = [
+    check('body')
+        .exists({ checkFalsey: true })
+        .withMessage('Comment body text is required'),
+    handleValidationErrors
+];
+
+
 
 //get all songs
-router.get('/', async(req, res)=> {
-   const songs = await Song.findAll()
-   res.json(songs)
+router.get('/', async (req, res) => {
+    const songs = await Song.findAll()
+    res.json(songs)
 });
- 
+
 //create a song based on albumId
-router.post('/', requireAuth, validateSong, async(req, res, next) => {
+router.post('/', requireAuth, validateSong, async (req, res, next) => {
     const { title, description, url, imageUrl, albumId } = req.body;
     const userId = req.user.id;
 
@@ -42,71 +50,96 @@ router.post('/', requireAuth, validateSong, async(req, res, next) => {
     });
     console.log(album);
 
-    if(album){
+    if (album) {
         const newSong = await Song.create({
             userId,
             albumId,
             title,
             description,
             url,
-            imageUrl           
+            imageUrl
         })
-        return res.json(newSong) 
-    }  else {
+        return res.json(newSong)
+    } else {
         const e = new Error();
-    e.message = "Album couldn't be found";
-    e.status = 404;
-    return next(e)
+        e.message = "Album couldn't be found";
+        e.status = 404;
+        return next(e)
     }
 });
 
 
 //get all songs created by current user
-router.get("/current",requireAuth, async (req, res) => {
+router.get("/current", requireAuth, async (req, res) => {
     let userId = req.user.id;
     const songs = await Song.findAll({
-      where: { userId },
+        where: { userId },
     });
-  
+
     return res.json(songs);
-  });
+});
 
- //get a song by id
+//get a song by id
 
- router.get("/:songId", async (req, res, next) => {
-  
+router.get("/:songId", async (req, res, next) => {
+
     const { songId } = req.params;
- 
-    const songById = await Song.findByPk(songId, {
-      include: [
-        { model: User, as: 'Artist', attributes: [ 'id', 'username'] },
-        { model: Album, attributes: ['id', 'title', 'imageUrl']  },
-      ],
-    });
-   if (!songById) {
-     const err = new Error();
-     err.message = "Song couldn't be found";
-     err.status = 404;
-     return next(err);
-   }
-   return res.json(songById);
- });
- 
- //edit song
 
- router.put('/:songId', requireAuth, validateSong, async (req, res, next) => {
+    const songById = await Song.findByPk(songId, {
+        include: [
+            { model: User, as: 'Artist', attributes: ['id', 'username'] },
+            { model: Album, attributes: ['id', 'title', 'imageUrl'] },
+        ],
+    });
+    if (!songById) {
+        const err = new Error();
+        err.message = "Song couldn't be found";
+        err.status = 404;
+        return next(err);
+    }
+    return res.json(songById);
+});
+
+//edit song
+
+router.put('/:songId', requireAuth, validateSong, async (req, res, next) => {
     const { songId } = req.params;
 
     const song = await Song.findByPk(songId);
 
     if (song) {
-        await song.update({...req.body});
+        await song.update({ ...req.body });
         return res.json(song)
     } else {
         songCouldNotBeFound(next);
     }
 })
 
+//create all comments by a song's id
+
+router.post('/:songId/comments', validateComment, async (req, res, next) => {
+    const userId = req.user.id;
+    const { songId } = req.params;
+    const { body } = req.body;
+
+    let findSongId = await Song.findByPk(songId);
+    if (!findSongId) {
+        const err = new Error();
+        err.message = "Song couldn't be found";
+        err.status = 404;
+        return next(err);
+        } else {
+        const newComment = await Comment.create({
+            userId,
+            body,
+            songId
+        })
+        return res.json(newComment)
+    }
+});
 
 
- module.exports = router;
+
+
+
+module.exports = router;

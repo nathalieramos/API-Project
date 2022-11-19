@@ -115,7 +115,7 @@ router.put('/:songId', requireAuth, validateSong, async (req, res, next) => {
     }
 })
 
-//create all comments by a song's id
+//create comment by a song's id
 
 router.post('/:songId/comments', validateComment, async (req, res, next) => {
     const userId = req.user.id;
@@ -128,7 +128,7 @@ router.post('/:songId/comments', validateComment, async (req, res, next) => {
         err.message = "Song couldn't be found";
         err.status = 404;
         return next(err);
-        } else {
+    } else {
         const newComment = await Comment.create({
             userId,
             body,
@@ -138,7 +138,23 @@ router.post('/:songId/comments', validateComment, async (req, res, next) => {
     }
 });
 
+//get comments by songid
 
+router.get("/:songId/comments", async (req, res, next) => {
+
+    const { songId } = req.params;
+
+    const commentById = await Comment.scope([{ method: ['songScopeComment', songId] }]).findAll({
+        include: [{ model: User }]
+    })
+    if (!commentById) {
+        const err = new Error();
+        err.message = "Song couldn't be found";
+        err.status = 404;
+        return next(err);
+    }
+    return res.json({ 'Comments': commentById });
+});
 
 
 

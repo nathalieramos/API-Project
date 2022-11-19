@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
   Playlist.init({
     userId: DataTypes.INTEGER,
     name: DataTypes.STRING,
-    imageUrl: DataTypes.STRING
+    previewImage: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Playlist',

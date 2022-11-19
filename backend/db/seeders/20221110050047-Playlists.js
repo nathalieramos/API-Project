@@ -8,13 +8,13 @@ module.exports = {
       id: 1,
       userId: 1,
       name: "Reggaeton",
-      imageUrl: 'https://i.pinimg.com/474x/d9/fa/be/d9fabe8750d55c4b0f27cdc0d1d3d862.jpg',
+      previewImage: 'image 2',
     },
     {
       id: 2,
       userId: 2,
       name: "Mexican Classics",
-      imageUrl: 'https://blog.xcaret.com/en/wp-content/uploads/2020/04/blog-xoximilco-56-1.jpg'
+      previewImage: 'image 1'
     }
     ], {});
 

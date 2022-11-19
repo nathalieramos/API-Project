@@ -107,14 +107,33 @@ router.get('/:userId/songs', async (req, res) => {
   const { userId } = req.params;
 
   const artistDets = await User.findByPk(userId);
-  
+
   if (!artistDets) {
-      return res.status(404).json({
-          'message': "Artist couldn't be found",
-          'statusCode': 404
-      })
+    return res.status(404).json({
+      'message': "Artist couldn't be found",
+      'statusCode': 404
+    })
   }
   const artistSongs = await Song.findAll({ where: { userId: userId } });
   res.json({ Songs: artistSongs });
 });
 module.exports = router;
+
+//get all playlist by user id
+
+router.get("/:userId/playlists", async (req, res, next) => {
+
+  const { userId } = req.params;
+
+  const playlistById = await User.findByPk(userId);
+
+  if (!playlistById) {
+    const err = new Error();
+    err.message = "Artist couldn't be found";
+    err.status = 404;
+    return next(err);
+  } else {
+    const Playlists = await playlistById.getPlaylists();
+    return res.json({ Playlists });
+  }
+});

@@ -72,6 +72,23 @@ router.get('/:albumId', async (req, res, next) => {
     }
 });
 
+//edit song
+router.put('/:albumId', requireAuth, validateAlbum, async (req, res, next) => {
+    const { albumId } = req.params;
+
+    const album = await Album.findByPk(albumId);
+
+    if (album) {
+        await album.update({...req.body});
+        return res.json(album)
+    } else {
+        const e = new Error();
+        e.message = "Album couldn't be found";
+        e.status = 404;
+        return next(e)
+    }
+})
+
 
 
 module.exports = router;

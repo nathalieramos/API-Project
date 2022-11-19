@@ -40,7 +40,7 @@ router.get('/', async (req, res) => {
 
 //create a song based on albumId
 router.post('/', requireAuth, validateSong, async (req, res, next) => {
-    const { title, description, url, imageUrl, albumId } = req.body;
+    const { title, description, url, previewImage, albumId } = req.body;
     const userId = req.user.id;
 
     const album = await Album.findOne({
@@ -57,7 +57,7 @@ router.post('/', requireAuth, validateSong, async (req, res, next) => {
             title,
             description,
             url,
-            imageUrl
+            previewImage
         })
         return res.json(newSong)
     } else {
@@ -88,7 +88,7 @@ router.get("/:songId", async (req, res, next) => {
     const songById = await Song.findByPk(songId, {
         include: [
             { model: User, as: 'Artist', attributes: ['id', 'username'] },
-            { model: Album, attributes: ['id', 'title', 'imageUrl'] },
+            { model: Album, attributes: ['id', 'title', 'previewImage'] },
         ],
     });
     if (!songById) {
@@ -111,9 +111,12 @@ router.put('/:songId', requireAuth, validateSong, async (req, res, next) => {
         await song.update({ ...req.body });
         return res.json(song)
     } else {
-        songCouldNotBeFound(next);
+        const e = new Error();
+        e.message = "Song couldn't be found.";
+        e.status = 404;
+        next(e);
     }
-})
+});
 
 //create comment by a song's id
 
@@ -148,10 +151,10 @@ router.get("/:songId/comments", async (req, res, next) => {
         include: [{ model: User }]
     })
     if (!commentById) {
-        const err = new Error();
-        err.message = "Song couldn't be found";
-        err.status = 404;
-        return next(err);
+        return res.status(404).json({
+            'message': "Song couldn't be found",
+            'statusCode': 404
+        })
     }
     return res.json({ 'Comments': commentById });
 });

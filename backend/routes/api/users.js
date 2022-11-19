@@ -1,5 +1,5 @@
 const express = require('express');
-
+const { Song, Album } = require('../../db/models')
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
 const { User } = require('../../db/models');
 const { check } = require('express-validator');
@@ -40,7 +40,7 @@ router.post(
       const token = setTokenCookie(res, user);
 
       return res.json({
-        id: user.id, firstName, lastName, email,token
+        id: user.id, firstName, lastName, email, token
       })
     } catch (error) {
       if (error.name === "SequelizeUniqueConstraintError") {
@@ -75,7 +75,30 @@ router.post(
   }
 );
 
+//get details of an artist by id
 
+router.get('/:userId', async (req, res) => {
+  const { userId } = req.params
+  const songs = await Song.count({ where: { userId } });
+  const albums = await Album.count({ where: { userId } })
+  const artistDets = await User.findByPk(userId)
+
+  if (artistDets) {
+    return res.json({
+      "id": artistDets.id,
+      "username": artistDets.username,
+      "totalSongs": songs,
+      "totalAlbums": albums,
+      "imageUrl": artistDets.imageUrl
+    });
+  } else {
+    res.status(404)
+    res.json({
+      "message": "Artist couldn't be found",
+      "statusCode": 404
+    })
+  }
+});
 
 
 module.exports = router;

@@ -43,7 +43,6 @@ router.post(
         id: user.id, firstName, lastName, email,token
       })
     } catch (error) {
-      console.log(error)
       if (error.name === "SequelizeUniqueConstraintError") {
         for (const err of error.errors) {
           if (err.message === "email must be unique") {

@@ -118,7 +118,7 @@ module.exports = (sequelize, DataTypes) => {
         loginUser: {
           attributes: {}
         },
-        artistIncluded: {
+        includeArtist: {
           attributes: {
             exclude: ['updatedAt', 'createdAt', 'hashedPassword',
               'email', 'firstName', 'lastName']

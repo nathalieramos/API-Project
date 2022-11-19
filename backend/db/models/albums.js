@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         hooks: true
       });
       Album.belongsTo(models.User, {
+        as: 'Artist',
         foreignKey: "userId",
         onDelete: 'CASCADE'
       });
@@ -23,15 +24,20 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Album.init({
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
     userId: DataTypes.INTEGER,
     title: DataTypes.STRING,
     description: DataTypes.STRING,
-    imageUrl: DataTypes.STRING
+    previewImage: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Album',
     scopes: {
-      albumScope: {
+      includeArtist: {
         attributes: {
           exclude: ['description', 'userId', 'createdAt', 'updatedAt']
         }

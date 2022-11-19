@@ -10,7 +10,12 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       userId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Users',
+          key: 'id'
+        },
+        onDelete: 'cascade'
       },
       title: {
         type: Sequelize.STRING(30)
@@ -18,8 +23,9 @@ module.exports = {
       description: {
         type: Sequelize.STRING(30)
       },
-      imageUrl: {
-        type: Sequelize.STRING(30)
+      previewImage: {
+        type: Sequelize.STRING(30),
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,

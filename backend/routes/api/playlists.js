@@ -1,5 +1,5 @@
 const express = require("express");
-const { User, Song, Album, Playlist, Comment } = require('../../db/models')
+const { User, Song, Album, PlaylistSong, Comment, Playlist } = require('../../db/models')
 const router = express.Router();
 const { requireAuth, restoreSession, restoreUser } = require('../../utils/auth');
 const { check } = require('express-validator');
@@ -14,10 +14,11 @@ const validatePlaylist = [
     handleValidationErrors
 ];
 
+
 //create a playlist
 
 router.post('/', requireAuth, validatePlaylist, async (req, res) => {
-    const { name, imageUrl} = req.body;
+    const { name, imageUrl } = req.body;
     const { user } = req;
 
     const createPlaylist = await Playlist.create({
@@ -29,6 +30,36 @@ router.post('/', requireAuth, validatePlaylist, async (req, res) => {
     return res.json(createPlaylist)
 });
 
+// //add a song to playlist
+
+router.post('/:playlistId/songs', requireAuth, async (req, res) => {
+    const { songId } = req.body;
+    const { playlistId } = req.params;
+
+    if (!await Playlist.findByPk(playlistId)) {
+        res.status(404)
+        res.json({
+            "message": "Playlist couldn't be found",
+            "statusCode": 404
+        })
+    } ;
+    if (!await Song.findOne({ songId })) {
+        res.status(404)
+        res.json({
+            'message': "Song couldn't be found",
+            'statusCode': 404
+        });
+    };
+
+    await PlaylistSong.create({ songId, playlistId });
+    const addTheSong = await PlaylistSong.scope('addSongToPlaylist').findOne({
+        where: {
+            songId: songId,
+            playlistId: playlistId
+        }
+    })
+    res.json(addTheSong)
+})
 
 
 
@@ -39,4 +70,10 @@ router.post('/', requireAuth, validatePlaylist, async (req, res) => {
 
 
 
-module.exports = router
+
+
+
+
+
+
+module.exports = router;

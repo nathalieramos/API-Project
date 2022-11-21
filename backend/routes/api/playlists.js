@@ -59,7 +59,26 @@ router.post('/:playlistId/songs', requireAuth, async (req, res) => {
         }
     })
     res.json(addTheSong)
-})
+});
+
+//get details of a playlist by id
+
+router.get('/:playlistId', async (req, res, next) => {
+    const { playlistId } = req.params;
+
+    const playlist = await Song.findByPk(playlistId);
+
+    if (playlist) {
+        const playlistDetails = await Playlist.findByPk(playlist.id);
+        playlistDetails.dataValues.Song = playlist
+        return res.json(playlistDetails)
+    } else {
+        const e = new Error();
+        e.message = "Playlist couldn't be found";
+        e.status = 404;
+        return next(e)
+    }
+});
 
 
 

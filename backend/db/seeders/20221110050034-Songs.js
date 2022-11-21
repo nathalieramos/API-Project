@@ -9,7 +9,7 @@ module.exports = {
       albumId: 1,
       userId: 1,
       title: "La Neverita",
-      imageUrl: 'https://i1.sndcdn.com/artworks-kGlnygiMbJDb-0-t500x500.jpg',
+      previewImage: 'image1',
       url: "",
       description: "A song about a summer rejection"
     },
@@ -18,8 +18,7 @@ module.exports = {
       albumId: 2,
       userId: 2,
       title: "Hasta que me olvides",
-      imageUrl: 'https://i.scdn.co/image/ab67616d0000b273e5f098d592c28ed04867b918',
-      url: "",
+      previewImage: 'image3',
       description: "A classic Mexican song about love" 
     }
   ], {});

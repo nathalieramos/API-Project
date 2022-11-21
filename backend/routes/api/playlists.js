@@ -80,6 +80,23 @@ router.get('/:playlistId', async (req, res, next) => {
     }
 });
 
+//edit a playlist 
+router.put('/:playlistId', requireAuth, validatePlaylist, async (req, res, next) => {
+    const { playlistId } = req.params;
+
+    const playlist = await Playlist.findByPk(playlistId);
+
+    if (playlist) {
+        await playlist.update({...req.body});
+        return res.json(playlist)
+    } else {
+        const e = new Error();
+        e.message = "Playlist couldn't be found";
+        e.status = 404;
+        return next(e)
+    }
+})
+
 
 
 

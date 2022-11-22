@@ -108,17 +108,25 @@ router.put('/:playlistId', requireAuth, validatePlaylist, async (req, res, next)
     }
 });
 
-// //get all playlist by current user
-
-
-// router.get('/current', requireAuth, async (req, res) => {
-//     const myPlaylist = await Playlist.findAll({
-//         where: { userId: req.user.id },
-//     });
-//     return res.json(myPlaylist)
-// });
-
-
+router.delete('/:playlistId', requireAuth, restoreUser, async (req, res) => {
+    const { playlistId } = req.params;
+    
+    const byebye = await Playlist.findByPk(playlistId);
+    if(byebye){
+        res.status(200)
+        res.json({
+            'message': "Successfully deleted",
+            'statusCode': 200
+        });
+    } else {
+        res.status(404)
+        res.json(res.json({
+            'message': "Playlist couldn't be found",
+            'statusCode': 404
+        }));
+    }
+    await byebye.destroy()
+});
 
 
 

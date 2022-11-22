@@ -159,6 +159,26 @@ router.get("/:songId/comments", async (req, res, next) => {
     return res.json({ 'Comments': commentById });
 });
 
+//delete a song 
+router.delete('/:songId', requireAuth, restoreUser, async (req, res) => {
+    const { songId } = req.params;
+    
+    const byebye = await Song.findByPk(songId);
+    if(byebye){
+        res.status(200)
+        res.json({
+            'message': "Successfully deleted",
+            'statusCode': 200
+        });
+    } else {
+        res.status(404)
+        res.json(res.json({
+            'message': "Song couldn't be found",
+            'statusCode': 404
+        }));
+    }
+    await byebye.destroy()
+});
 
 
 module.exports = router;

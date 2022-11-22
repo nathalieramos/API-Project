@@ -1,5 +1,5 @@
 const express = require('express');
-const { Song, Album } = require('../../db/models')
+const { Song, Album, Playlist } = require('../../db/models')
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
 const { User } = require('../../db/models');
 const { check } = require('express-validator');

@@ -15,6 +15,7 @@ const validatePlaylist = [
 ];
 
 
+
 //create a playlist
 
 router.post('/', requireAuth, validatePlaylist, async (req, res) => {
@@ -28,6 +29,16 @@ router.post('/', requireAuth, validatePlaylist, async (req, res) => {
     });
 
     return res.json(createPlaylist)
+});
+
+//get all playlist by current user
+
+
+router.get('/current', requireAuth, async (req, res) => {
+    const myPlaylist = await Playlist.findAll({
+        where: { userId: req.user.id },
+    });
+    return res.json(myPlaylist)
 });
 
 // //add a song to playlist
@@ -95,11 +106,17 @@ router.put('/:playlistId', requireAuth, validatePlaylist, async (req, res, next)
         e.status = 404;
         return next(e)
     }
-})
+});
+
+// //get all playlist by current user
 
 
-
-
+// router.get('/current', requireAuth, async (req, res) => {
+//     const myPlaylist = await Playlist.findAll({
+//         where: { userId: req.user.id },
+//     });
+//     return res.json(myPlaylist)
+// });
 
 
 

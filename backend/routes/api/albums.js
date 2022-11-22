@@ -95,6 +95,7 @@ router.delete('/:albumId', requireAuth, restoreUser, async (req, res) => {
     
     const byebye = await Album.findByPk(albumId);
     if(byebye){
+        await byebye.destroy()
         res.status(200)
         res.json({
             'message': "Successfully deleted",
@@ -107,7 +108,6 @@ router.delete('/:albumId', requireAuth, restoreUser, async (req, res) => {
             'statusCode': 404
         }));
     }
-    await byebye.destroy()
 });
 
 

@@ -113,6 +113,7 @@ router.delete('/:playlistId', requireAuth, restoreUser, async (req, res) => {
     
     const byebye = await Playlist.findByPk(playlistId);
     if(byebye){
+        await byebye.destroy()
         res.status(200)
         res.json({
             'message': "Successfully deleted",
@@ -125,7 +126,6 @@ router.delete('/:playlistId', requireAuth, restoreUser, async (req, res) => {
             'statusCode': 404
         }));
     }
-    await byebye.destroy()
 });
 
 

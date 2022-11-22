@@ -16,12 +16,6 @@ const validateSong = [
     handleValidationErrors
 ];
 
-const songCouldNotBeFound = (next) => {
-    const e = new Error();
-    e.message = "Song couldn't be found.";
-    e.status = 404;
-    next(e)
-}
 
 const validateComment = [
     check('body')
@@ -165,6 +159,7 @@ router.delete('/:songId', requireAuth, restoreUser, async (req, res) => {
     
     const byebye = await Song.findByPk(songId);
     if(byebye){
+        await byebye.destroy()
         res.status(200)
         res.json({
             'message': "Successfully deleted",
@@ -177,7 +172,6 @@ router.delete('/:songId', requireAuth, restoreUser, async (req, res) => {
             'statusCode': 404
         }));
     }
-    await byebye.destroy()
 });
 
 

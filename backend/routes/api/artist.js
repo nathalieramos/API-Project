@@ -26,7 +26,7 @@ router.get('/:userId/albums', async (req, res) => {
             userId
         },
     });
-    res.json(albums)
+    res.json("Albums:", albums)
 });
 
 

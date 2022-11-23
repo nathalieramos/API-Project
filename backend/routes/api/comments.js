@@ -7,16 +7,9 @@ const { handleValidationErrors } = require('../../utils/validation');
 const { Model } = require("sequelize");
 
 
-const validateComment = [
-    check('body')
-        .exists({ checkFalsey: true })
-        .withMessage('Comment body text is required'),
-    handleValidationErrors
-];
-
 // edit a comment 
 
-router.put('/:commentId', requireAuth, validateComment, async (req, res, next) => {
+router.put('/:commentId', requireAuth, async (req, res, next) => {
     const { commentId } = req.params;
 
     const editedComment = await Comment.findByPk(commentId);

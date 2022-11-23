@@ -63,7 +63,7 @@ router.post('/:playlistId/songs', requireAuth, async (req, res) => {
             songId: song.id
         });
 
-        const playlistSong = await PlaylistSong.scope('addSongs').findOne({
+        const playlistSong = await PlaylistSong.scope('addSongToPlaylist').findOne({
             where: {
                 id: newSong.id
             }

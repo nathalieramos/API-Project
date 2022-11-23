@@ -198,9 +198,8 @@ router.post('/:songId/comments', validateComment, async (req, res, next) => {
 
 router.get('/:songId/comments', async (req, res) => {
     const {songId} = req.params
-    const commentById = await Comment.scope([{method: ['songScopeComment', songId]}]).findAll({
-      include: [{model: User}]
-    })
+    const commentById = await Comment.scope([{method: ['songScopeComment', songId]}]).findAll()
+    
     if (!commentById) {
       res.status(404);
       return res.json({

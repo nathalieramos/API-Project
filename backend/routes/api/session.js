@@ -1,5 +1,5 @@
-const express = require('express')
-
+const express = require('express');
+const router = express.Router();
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 
@@ -34,7 +34,8 @@ router.post(
       return next(err);
     }
 
-    await setTokenCookie(res, user);
+    const token = await setTokenCookie(res, user);
+    user.dataValues.token = token;
 
     return res.json({
       user: user
@@ -65,5 +66,5 @@ router.get(
 );
 
 
-const router = express.Router();
+
 module.exports = router;

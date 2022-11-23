@@ -44,33 +44,50 @@ router.get('/current', requireAuth, async (req, res) => {
 // //add a song to playlist
 
 router.post('/:playlistId/songs', requireAuth, async (req, res) => {
-    const { songId } = req.body;
+    const { user } = req;
     const { playlistId } = req.params;
+    const { songId } = req.body;
 
-    if (!await Playlist.findByPk(playlistId)) {
-        res.status(404)
-        res.json({
-            "message": "Playlist couldn't be found",
-            "statusCode": 404
-        })
-    } ;
-    if (!await Song.findOne({ songId })) {
-        res.status(404)
-        res.json({
-            'message': "Song couldn't be found",
-            'statusCode': 404
-        });
-    };
-
-    await PlaylistSong.create({ songId, playlistId });
-    const addTheSong = await PlaylistSong.scope('addSongToPlaylist').findOne({
+    const playlist = await Playlist.findOne({
         where: {
-            songId: songId,
-            playlistId: playlistId
+            userId: user.id,
+            id: playlistId
         }
-    })
-    res.json(addTheSong)
+    });
+
+    const song = await Song.findByPk(songId);
+
+    if (playlist && song) {
+        const newSong = await PlaylistSong.create({
+            playlistId: playlist.id,
+            songId: song.id
+        });
+
+        const playlistSong = await PlaylistSong.scope('addSongs').findOne({
+            where: {
+                id: newSong.id
+            }
+        })
+
+        return res.json(playlistSong)
+    } else {
+        if (!playlist) {
+            res.status(404)
+            res.json({
+                "message": "Playlist couldn't be found",
+                "statusCode": 404
+            })
+        }
+        if (!song) {
+            res.status(404)
+            res.json({
+                "message": "Song couldn't be found",
+                "statusCode": 404
+            })
+        }
+    }
 });
+
 
 //get details of a playlist by id
 
@@ -98,7 +115,7 @@ router.put('/:playlistId', requireAuth, validatePlaylist, async (req, res, next)
     const playlist = await Playlist.findByPk(playlistId);
 
     if (playlist) {
-        await playlist.update({...req.body});
+        await playlist.update({ ...req.body });
         return res.json(playlist)
     } else {
         const e = new Error();
@@ -110,9 +127,9 @@ router.put('/:playlistId', requireAuth, validatePlaylist, async (req, res, next)
 
 router.delete('/:playlistId', requireAuth, restoreUser, async (req, res) => {
     const { playlistId } = req.params;
-    
+
     const byebye = await Playlist.findByPk(playlistId);
-    if(byebye){
+    if (byebye) {
         await byebye.destroy()
         res.status(200)
         res.json({

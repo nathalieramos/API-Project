@@ -32,10 +32,6 @@ module.exports = (sequelize, DataTypes) => {
           where: {
             songId: songId,
           },
-          include: {
-            model: User,
-            attributes: ['id', 'username']
-          }
         }
       }
     }

@@ -55,13 +55,13 @@ const validateComment = [
 
 //get all songs
 router.get('/', validateQuery, async (req, res) => {
-     
+
     const queryObj = req.query;
     let { page, size } = queryObj;
-    page = Number.parseInt(page) 
+    page = Number.parseInt(page)
     size = Number.parseInt(size)
 
-   
+
     if (Number.isNaN(page)) page = 1;
     if (Number.isNaN(size)) size = 10;
 
@@ -74,7 +74,7 @@ router.get('/', validateQuery, async (req, res) => {
 
     else {
         pagination.limit = size;
-       
+
         pagination.offset = size * (page - 1)
     }
 
@@ -196,20 +196,23 @@ router.post('/:songId/comments', validateComment, async (req, res, next) => {
 
 //get comments by songid
 
-router.get("/:songId/comments", validateComment, async (req, res, next) => {
+router.get("/:songId/comments", async (req, res, next) => {
 
     const { songId } = req.params;
 
     const commentById = await Comment.scope([{ method: ['songScopeComment', songId] }]).findAll({
         include: [{ model: User }]
     })
-    // if (!commentById) {
-    //     return res.status(404).json({
-    //         'message': "Song couldn't be found",
-    //         'statusCode': 404
-    //     })
-    return res.json({ 'Comments': commentById });
-    });
+    if (commentById) {
+        res.json({ 'Comments': commentById });
+    } else {
+        return res.status(404).json({
+            'message': "Song couldn't be found",
+            'statusCode': 404
+        })
+    }
+
+});
 
 //delete a song 
 router.delete('/:songId', requireAuth, restoreUser, async (req, res) => {

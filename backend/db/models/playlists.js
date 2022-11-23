@@ -18,7 +18,8 @@ module.exports = (sequelize, DataTypes) => {
        foreignKey: "userId"
         });
         Playlist.hasMany(models.PlaylistSong, {
-          foreignKey: 'playlistId',
+          foreignKey: 'playlistId', 
+          foreignKey: 'songId',
           onDelete: 'CASCADE',
           hooks: true
         })

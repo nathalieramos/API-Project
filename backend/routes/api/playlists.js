@@ -110,7 +110,7 @@ router.get('/:playlistId', async (req, res, next) => {
                 through: { attributes: [] }
             }
         });
-        return res.json(playlistSongs)
+        return res.json({ Playlists:playlistSongs })
     } else {
         if (!playlist) {
             res.status(404)

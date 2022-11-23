@@ -196,21 +196,20 @@ router.post('/:songId/comments', validateComment, async (req, res, next) => {
 
 //get comments by songid
 
-router.get("/:songId/comments", async (req, res, next) => {
+router.get("/:songId/comments", validateComment, async (req, res, next) => {
 
     const { songId } = req.params;
 
     const commentById = await Comment.scope([{ method: ['songScopeComment', songId] }]).findAll({
         include: [{ model: User }]
     })
-    if (!commentById) {
-        return res.status(404).json({
-            'message': "Song couldn't be found",
-            'statusCode': 404
-        })
-    }
+    // if (!commentById) {
+    //     return res.status(404).json({
+    //         'message': "Song couldn't be found",
+    //         'statusCode': 404
+    //     })
     return res.json({ 'Comments': commentById });
-});
+    });
 
 //delete a song 
 router.delete('/:songId', requireAuth, restoreUser, async (req, res) => {
@@ -236,57 +235,7 @@ router.delete('/:songId', requireAuth, restoreUser, async (req, res) => {
 
 
 
-// router.get('/', validateQuery, async (req, res) => {
-   
-//     const queryObj = req.query;
-//     let { page, size } = queryObj;
-//     page = Number.parseInt(page) 
-//     size = Number.parseInt(size)
 
-   
-//     if (Number.isNaN(page)) page = 1;
-//     if (Number.isNaN(size)) size = 10;
-
-//     let limit;
-//     let offset;
-
-//     if (page === 0) {
-//         limit = null;
-//         offset = null;
-//     }
-
-//     else {
-//         limit = size;
-       
-//         offset = size * (page - 1)
-//     }
-
-//     const songs = await Song.findAll({
-//         // include:
-//         //     [{
-//         //         model: User, as: 'Artist',
-//         //         attributes: ['id', 'username', 'imageUrl']
-//         //     }],
-
-//         // attributes: ['id', 'userId', 'albumId', 'title', 'description',
-//         //     'url',
-//         //     'createdAt',
-//         //     'updatedAt',
-//         //     'imageUrl'
-//         // ],
-
-//         ...pagination
-//     });
-
-// console.log(page);
-// console.log(size);
-
-//     res.json({
-//         songs,
-//         page,
-//         size
-//     });
-// });
 
 
 

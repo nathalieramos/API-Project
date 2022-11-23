@@ -36,18 +36,10 @@ const validateQuery = [
 const validateSong = [
     check('title')
         .exists({ checkFalsey: true })
-        .status(404)
-        .json({
-            "message": "Comment couldn't be found",
-            "statusCode": 404
-        }),
+        .withMessage('Song title is required.'),
     check('url')
         .exists({ checkFalsy: true })
-        .status(404)
-        .json({
-            "message": "Comment couldn't be found",
-            "statusCode": 404
-        }),
+        .withMessage('Audio is required'),
     handleValidationErrors
 ];
 
@@ -55,11 +47,7 @@ const validateSong = [
 const validateComment = [
     check('body')
         .exists({ checkFalsey: true })
-        .status(404)
-        .json({
-            "message": "Comment couldn't be found",
-            "statusCode": 404
-        }),
+        .withMessage('Comment body text is required'),
     handleValidationErrors
 ];
 
@@ -208,15 +196,19 @@ router.post('/:songId/comments', validateComment, async (req, res, next) => {
 
 //get comments by songid
 
-router.get('/:songId/comments', validateComment, async (req, res) => {
-    const { songId } = req.params
-    const commentById = await Comment.scope([{ method: ['songScopeComment', songId] }]).findAll()
+router.get('/:songId/comments', async (req, res) => {
+    const {songId} = req.params
+    const commentById = await Comment.scope([{method: ['songScopeComment', songId]}]).findAll()
 
-    if (commentById) {
-      
-        return res.json({ "Comments": commentById })
+    if (!commentById) {
+      res.status(404);
+      return res.json({
+        message: "Song couldn't be found",
+        statusCode: 404
+      })
     }
-});
+      return res.json({"Comments": commentById})
+  });
 
 //delete a song 
 router.delete('/:songId', requireAuth, restoreUser, async (req, res) => {

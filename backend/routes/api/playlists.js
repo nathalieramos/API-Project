@@ -91,22 +91,37 @@ router.post('/:playlistId/songs', requireAuth, async (req, res) => {
 
 //get details of a playlist by id
 
-router.get('/:playlistId', async (req, res) => {
+router.get('/:playlistId', async (req, res, next) => {
     const { playlistId } = req.params;
 
-    const playlist = await Song.findByPk(playlistId);
+    const playlist = await PlaylistSong.findOne({
+        where: {
+            playlistId
+        }
+    });
 
-    if (!playlist){
-        res.status(404)
-        res.json({
-            "message": "Playlist couldn't be found",
-            "statusCode": 404
-    })
-} else {
-        const playlistDetails = await Playlist.findByPk(playlist.id);
-        playlistDetails.dataValues.Song = playlist
-        return res.json(playlistDetails)
-    } 
+    if (playlist) {
+
+        const playlistSongs = await Playlist.findOne({
+            where: {
+                id: playlist.playlistId
+            },
+            include: {
+                model: Song,
+                through: { attributes: [] }
+            }
+        });
+
+        return res.json(playlistSongs)
+    } else {
+        if (!playlist) {
+            res.status(404)
+            res.json({
+                "message": "Playlist couldn't be found",
+                "statusCode": 404
+            });
+        }
+    }
 });
 
 //edit a playlist 

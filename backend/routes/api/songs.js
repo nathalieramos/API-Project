@@ -197,19 +197,20 @@ router.post('/:songId/comments', validateComment, async (req, res, next) => {
 //get comments by songid
 
 router.get('/:songId/comments', async (req, res) => {
-    const {songId} = req.params
-    const commentById = await Comment.scope([{method: ['songScopeComment', songId]}]).findAll()
-    
+    const { songId } = req.params
+    const commentById = await Comment.scope([{ method: ['songScopeComment', songId] }]).findAll()
+
     if (!commentById) {
-      res.status(404);
-      return res.json({
-        message: "Song couldn't be found",
-        statusCode: 404
-      })
+        res.status(404);
+        return res.json({
+            message: "Song couldn't be found",
+            statusCode: 404
+        })
+    } else {
+
+        return res.json({ "Comments": commentById })
     }
-  
-    res.json({"Comments": commentById})
-  });
+});
 
 //delete a song 
 router.delete('/:songId', requireAuth, restoreUser, async (req, res) => {

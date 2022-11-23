@@ -96,18 +96,17 @@ router.get('/:playlistId', async (req, res) => {
 
     const playlist = await Song.findByPk(playlistId);
 
-    if (playlist) {
-        const playlistDetails = await Playlist.findByPk(playlist.id);
-        playlistDetails.dataValues.Song = playlist
-        return res.json(playlistDetails)
-    } 
     if (!playlist){
         res.status(404)
         res.json({
             "message": "Playlist couldn't be found",
             "statusCode": 404
     })
-}
+} else {
+        const playlistDetails = await Playlist.findByPk(playlist.id);
+        playlistDetails.dataValues.Song = playlist
+        return res.json(playlistDetails)
+    } 
 });
 
 //edit a playlist 

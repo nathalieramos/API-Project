@@ -100,7 +100,8 @@ router.get('/:playlistId', async (req, res) => {
         const playlistDetails = await Playlist.findByPk(playlist.id);
         playlistDetails.dataValues.Song = playlist
         return res.json(playlistDetails)
-    } else {
+    } 
+    if (!playlist){
         res.status(404)
         res.json({
             "message": "Playlist couldn't be found",

@@ -209,7 +209,7 @@ router.get('/:songId/comments', async (req, res) => {
       })
     }
   
-    res.json({"Comments": commentScope})
+    res.json({"Comments": commentById})
   });
 
 //delete a song 

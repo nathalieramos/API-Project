@@ -11,7 +11,7 @@ module.exports = {
       title: "La Neverita",
       previewImage: 'image1',
       url: "",
-      description: "A song about a summer rejection"
+      description: "A song about a summer"
     },
     {
       id: 2,
@@ -19,7 +19,7 @@ module.exports = {
       userId: 2,
       title: "Hasta que me olvides",
       previewImage: 'image3',
-      description: "A classic Mexican song about love" 
+      description: "A classic Mexican song" 
     }
   ], {});
   },

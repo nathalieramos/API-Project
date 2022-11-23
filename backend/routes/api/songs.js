@@ -3,8 +3,35 @@ const { User, Song, Album, Playlist, Comment } = require('../../db/models')
 const router = express.Router();
 const { requireAuth, restoreUser } = require('../../utils/auth');
 const { handleValidationErrors } = require('../../utils/validation');
-const { check, validationResult } = require('express-validator');
-const { ValidationError } = require("sequelize");
+const { check } = require('express-validator');
+
+
+
+const validateQuery = [
+    check('size')
+        .custom(async (value, { req }) => {
+            if (req.query) {
+                const { size } = req.query
+                if (size < 0) {
+                    return await Promise.reject("Size must be greater than or equal to 0")
+                }
+            }
+        }),
+    check('page')
+        .custom(async (value, { req }) => {
+            if (req.query) {
+                const { page } = req.query
+                if (page < 0) {
+                    return await Promise.reject("Page must be greater than or equal to 0")
+                }
+            }
+        }),
+    check('createdAt')
+        .isDate({ dateOnly: false })
+        .optional({ nullable: true })
+        .withMessage("CreatedAt is invalid"),
+    handleValidationErrors
+];
 
 const validateSong = [
     check('title')
@@ -28,9 +55,41 @@ const validateComment = [
 
 //get all songs
 router.get('/', async (req, res) => {
-    const songs = await Song.findAll()
-    res.json(songs)
+     
+    const queryObj = req.query;
+    let { page, size } = queryObj;
+    page = Number.parseInt(page) 
+    size = Number.parseInt(size)
+
+   
+    if (Number.isNaN(page)) page = 1;
+    if (Number.isNaN(size)) size = 10;
+
+    const pagination = {};
+
+    if (page === 0) {
+        limit = null;
+        offset = null;
+    }
+
+    else {
+        pagination.limit = size;
+       
+        pagination.offset = size * (page - 1)
+    }
+
+    const songs = await Song.findAll({
+
+        ...pagination
+    });
+
+    res.json({
+        songs,
+        page,
+        size
+    });
 });
+
 
 //create a song based on albumId
 router.post('/', requireAuth, validateSong, async (req, res, next) => {
@@ -156,9 +215,9 @@ router.get("/:songId/comments", async (req, res, next) => {
 //delete a song 
 router.delete('/:songId', requireAuth, restoreUser, async (req, res) => {
     const { songId } = req.params;
-    
+
     const byebye = await Song.findByPk(songId);
-    if(byebye){
+    if (byebye) {
         await byebye.destroy()
         res.status(200)
         res.json({
@@ -173,6 +232,62 @@ router.delete('/:songId', requireAuth, restoreUser, async (req, res) => {
         }));
     }
 });
+
+
+
+
+// router.get('/', validateQuery, async (req, res) => {
+   
+//     const queryObj = req.query;
+//     let { page, size } = queryObj;
+//     page = Number.parseInt(page) 
+//     size = Number.parseInt(size)
+
+   
+//     if (Number.isNaN(page)) page = 1;
+//     if (Number.isNaN(size)) size = 10;
+
+//     let limit;
+//     let offset;
+
+//     if (page === 0) {
+//         limit = null;
+//         offset = null;
+//     }
+
+//     else {
+//         limit = size;
+       
+//         offset = size * (page - 1)
+//     }
+
+//     const songs = await Song.findAll({
+//         // include:
+//         //     [{
+//         //         model: User, as: 'Artist',
+//         //         attributes: ['id', 'username', 'imageUrl']
+//         //     }],
+
+//         // attributes: ['id', 'userId', 'albumId', 'title', 'description',
+//         //     'url',
+//         //     'createdAt',
+//         //     'updatedAt',
+//         //     'imageUrl'
+//         // ],
+
+//         ...pagination
+//     });
+
+// console.log(page);
+// console.log(size);
+
+//     res.json({
+//         songs,
+//         page,
+//         size
+//     });
+// });
+
 
 
 module.exports = router;

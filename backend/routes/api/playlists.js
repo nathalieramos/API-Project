@@ -101,7 +101,6 @@ router.get('/:playlistId', async (req, res, next) => {
     });
 
     if (playlist) {
-
         const playlistSongs = await Playlist.findOne({
             where: {
                 id: playlist.playlistId
@@ -111,7 +110,6 @@ router.get('/:playlistId', async (req, res, next) => {
                 through: { attributes: [] }
             }
         });
-
         return res.json(playlistSongs)
     } else {
         if (!playlist) {
@@ -134,10 +132,13 @@ router.put('/:playlistId', requireAuth, validatePlaylist, async (req, res, next)
         await playlist.update({ ...req.body });
         return res.json(playlist)
     } else {
-        const e = new Error();
-        e.message = "Playlist couldn't be found";
-        e.status = 404;
-        return next(e)
+        if (!playlist) {
+            res.status(404)
+            res.json({
+                "message": "Playlist couldn't be found",
+                "statusCode": 404
+            });
+        }
     }
 });
 

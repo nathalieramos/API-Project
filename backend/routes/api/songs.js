@@ -200,7 +200,7 @@ router.get("/:songId/comments", async (req, res) => {
 
     const { songId } = req.params;
 
-    const commentById = await Comment.scope('songScopeComment').findAll()
+    const commentById = await Comment.scope([{ method: ['songScopeComment', songId] }]).findAll()
     if (commentById) {
         res.json({ 'Comments': commentById });
     } else {

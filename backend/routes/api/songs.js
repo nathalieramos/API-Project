@@ -200,9 +200,7 @@ router.get("/:songId/comments", async (req, res, next) => {
 
     const { songId } = req.params;
 
-    const commentById = await Comment.scope([{ method: ['songScopeComment', songId] }]).findAll({
-        include: [{ model: User }]
-    })
+    const commentById = await Comment.scope([{ method: ['songScopeComment', songId] }]).findAll()
     if (commentById) {
         res.json({ 'Comments': commentById });
     } else {

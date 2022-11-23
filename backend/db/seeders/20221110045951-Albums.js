@@ -8,14 +8,14 @@ module.exports = {
       id: 1,
       userId: 1,
       title: 'Un Verano Sin Ti',
-      description: 'Summer album that released in 2022',
+      description: 'Summer album that released',
       previewImage: 'image url'
     },
     {
       id: 2,
       userId: 2,
       title: 'Aries',
-      description: 'Mexican Pop album that realeased in 1993',
+      description: 'Mexican Pop album that',
       previewImage: 'image url'
     }
     ], {});

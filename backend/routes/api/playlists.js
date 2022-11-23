@@ -38,7 +38,7 @@ router.get('/current', requireAuth, async (req, res) => {
     const myPlaylist = await Playlist.findAll({
         where: { userId: req.user.id },
     });
-    return res.json(myPlaylist)
+    return res.json({ 'Playlists': myPlaylist })
 });
 
 // //add a song to playlist
@@ -110,7 +110,7 @@ router.get('/:playlistId', async (req, res, next) => {
                 through: { attributes: [] }
             }
         });
-        return res.json({ 'Playlists': playlistSongs })
+        return res.json(playlistSongs)
     } else {
         if (!playlist) {
             res.status(404)

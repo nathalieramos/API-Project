@@ -11,27 +11,22 @@ const validateSignup = [
   check('email')
     .exists({ checkFalsy: true })
     .isEmail()
-    .withMessage('Please provide a valid email.'),
+    .withMessage('Invalid Email'),
   check('username')
     .exists({ checkFalsy: true })
-    .isLength({ min: 4 })
-    .withMessage('Please provide a username with at least 4 characters.'),
-  check('username')
-    .not()
-    .isEmail()
-    .withMessage('Username cannot be an email.'),
-  check('password')
+    .withMessage('Username is required'),
+  check('firstName')
     .exists({ checkFalsy: true })
-    .isLength({ min: 6 })
-    .withMessage('Password must be 6 characters or more.'),
+    .withMessage('First Name is required'),
+  check('lastName')
+    .exists({ checkFalsy: true })
+    .withMessage('Last Name is required'),
   handleValidationErrors
 ];
 
 // Sign up
-router.post(
-  '/',
-  validateSignup,
-  async (req, res) => {
+router.post('/', validateSignup, async (req, res) => {    
+
     const { firstName, lastName, email, password, username } = req.body;
 
     try {
@@ -72,8 +67,7 @@ router.post(
       throw error
     }
 
-  }
-);
+});
 
 //get details of an artist by id
 
@@ -81,7 +75,12 @@ router.get('/:userId', async (req, res) => {
   const { userId } = req.params
   const songs = await Song.count({ where: { userId } });
   const albums = await Album.count({ where: { userId } })
-  const artistDets = await User.findByPk(userId)
+  const artistDets = await User.findByPk({
+    where: {
+      id: userId
+    },
+    include:['previewImage']
+  });
 
   if (artistDets) {
     return res.json({
@@ -89,7 +88,7 @@ router.get('/:userId', async (req, res) => {
       "username": artistDets.username,
       "totalSongs": songs,
       "totalAlbums": albums,
-      "imageUrl": artistDets.imageUrl
+      "imageUrl": artistDets.imageUrl,
     });
   } else {
     res.status(404)

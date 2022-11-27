@@ -73,22 +73,19 @@ router.post('/', validateSignup, async (req, res) => {
 
 router.get('/:userId', async (req, res) => {
   const { userId } = req.params
-  const songs = await Song.count({ where: { userId } });
+  const songs = await Song.findAll({ where: { userId }, 
+  include: ['previewImage']});
   const albums = await Album.count({ where: { userId } })
-  const artistDets = await User.findByPk({
-    where: {
-      id: userId
-    },
-    include:['previewImage']
-  });
+  const artistDets = await User.findByPk(userId);
 
   if (artistDets) {
     return res.json({
       "id": artistDets.id,
       "username": artistDets.username,
-      "totalSongs": songs,
+      "totalSongs": songs.length,
       "totalAlbums": albums,
       "imageUrl": artistDets.imageUrl,
+      'songs': songs
     });
   } else {
     res.status(404)

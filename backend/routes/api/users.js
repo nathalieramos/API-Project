@@ -75,7 +75,7 @@ router.get('/:userId', async (req, res) => {
   const { userId } = req.params
   const songs = await Song.findAll({
     where: { userId },
-    include: { attributes: ['previewImage'] }
+    attributes: { include: ['previewImage'] }
   });
   const albums = await Album.count({ where: { userId } })
   const artistDets = await User.findByPk(userId);

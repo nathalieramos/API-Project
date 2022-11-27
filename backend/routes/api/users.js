@@ -25,47 +25,47 @@ const validateSignup = [
 ];
 
 // Sign up
-router.post('/', validateSignup, async (req, res) => {    
+router.post('/', validateSignup, async (req, res) => {
 
-    const { firstName, lastName, email, password, username } = req.body;
+  const { firstName, lastName, email, password, username } = req.body;
 
-    try {
-      const user = await User.signup({ firstName, lastName, email, username, password });
+  try {
+    const user = await User.signup({ firstName, lastName, email, username, password });
 
-      const token = setTokenCookie(res, user);
+    const token = setTokenCookie(res, user);
 
-      return res.json({
-        id: user.id, firstName, lastName, email, token
-      })
-    } catch (error) {
-      if (error.name === "SequelizeUniqueConstraintError") {
-        for (const err of error.errors) {
-          if (err.message === "email must be unique") {
-            res.status(403)
-            return res.json({
-              "message": "User already exists",
-              "statusCode": 403,
-              "errors": {
-                "email": "User with that email already exists"
-              }
-            })
-          }
-          if (err.message === "username must be unique") {
-            res.status(403)
-            return res.json({
-              "message": "User already exists",
-              "statusCode": 403,
-              "errors": {
-                "username": "User with that username already exists"
-              }
-            })
-          }
+    return res.json({
+      id: user.id, firstName, lastName, email, token
+    })
+  } catch (error) {
+    if (error.name === "SequelizeUniqueConstraintError") {
+      for (const err of error.errors) {
+        if (err.message === "email must be unique") {
+          res.status(403)
+          return res.json({
+            "message": "User already exists",
+            "statusCode": 403,
+            "errors": {
+              "email": "User with that email already exists"
+            }
+          })
         }
-
+        if (err.message === "username must be unique") {
+          res.status(403)
+          return res.json({
+            "message": "User already exists",
+            "statusCode": 403,
+            "errors": {
+              "username": "User with that username already exists"
+            }
+          })
+        }
       }
 
-      throw error
     }
+
+    throw error
+  }
 
 });
 
@@ -73,8 +73,10 @@ router.post('/', validateSignup, async (req, res) => {
 
 router.get('/:userId', async (req, res) => {
   const { userId } = req.params
-  const songs = await Song.findAll({ where: { userId }, 
-  include: ['previewImage']});
+  const songs = await Song.findAll({
+    where: { userId },
+    include: { attributes: ['previewImage'] }
+  });
   const albums = await Album.count({ where: { userId } })
   const artistDets = await User.findByPk(userId);
 

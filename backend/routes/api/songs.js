@@ -101,7 +101,7 @@ router.post('/', requireAuth, validateSong, async (req, res, next) => {
             id: albumId
         }
     });
-    console.log(album);
+   
 
     if (album) {
         const newSong = await Song.create({

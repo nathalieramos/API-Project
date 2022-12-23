@@ -23,9 +23,9 @@ router.post(
   validateLogin,
   async (req, res, next) => {
     const { credential, password } = req.body;
-
+    console.log('reach backend')
     const user = await User.login({ credential, password });
-
+    console.log('user logged in')
     if (!user) {
       const err = new Error('Login failed');
       err.status = 401;

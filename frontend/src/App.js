@@ -5,7 +5,7 @@ import SignupFormPage from "./components/SignupFormPage";
 import * as sessionActions from "./store/session";
 import Navigation from "./components/Navigation";
 
-import CreateSongForm from "./components/Songs/index";
+import CreateSongForm from "./components/Songs/CreateSong";
 import { getSongsThunk } from "./store/songs";
 
 function App() {

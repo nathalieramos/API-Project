@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-import { createSongThunk } from '../../store/songs';
+import { createSongThunk } from '../../../store/songs';
 import './CreateSong.css';
 
-function CreateSongForm({ setShowModal }) {
+function CreateSongForm({ user }) {
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -44,7 +44,7 @@ function CreateSongForm({ setShowModal }) {
 
         let createdSong = await dispatch(createSongThunk(payload));
         if (createdSong && Object.keys(validationErrors).length === 0) {
-          history.push(`/${createdSong.id}`);
+            history.push(`/${createdSong.id}`);
         }
 
     };

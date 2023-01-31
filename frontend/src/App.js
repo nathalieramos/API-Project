@@ -1,27 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Route, Switch } from "react-router-dom";
 import SignupFormPage from "./components/SignupFormPage";
 import * as sessionActions from "./store/session";
 import Navigation from "./components/Navigation";
-
-import CreateSongForm from "./components/Songs/CreateSong/CreateSong";
-import GetSongsDetails from "./components/Songs/GetSongDetails/GetSongDetails";
+import GetAlbums from "./components/Albums/GetAlbums/GetAlbums";
+import AddAlbumForm from './components/Albums/AddAlbum/AddAlbum';
+import EditAlbumForm from "./components/Albums/EditAlbum/EditAlbum";
 
 
 function App() {
   const dispatch = useDispatch();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState()
 
   useEffect(() => {
     dispatch(sessionActions.restoreUser()).then(() => setIsLoaded(true));
   }, [dispatch]);
 
+  const user = useSelector(state => state.session.user)
+  useEffect(() => {
+    if (user) setIsLoggedIn(true)
+    if (user === null) setIsLoggedIn(false)
+  }, [user])
 
   return (
     <>
       <Navigation isLoaded={isLoaded} />
-      {isLoaded && (
+      {/* {isLoaded && ( */}
         <Switch>
 
 
@@ -29,19 +35,24 @@ function App() {
             <SignupFormPage />
           </Route>
 
-
-          <Route path="/songs/new">
-            <CreateSongForm />
+          <Route path='/albums/:albumId'>
+            <GetAlbums />
           </Route>
 
-        <Route path="/songs/:id">
-            <GetSongsDetails />
-        </Route>
+          <Route exact path='/albums'>
+            <AddAlbumForm />
+          </Route>
+
+          {/* <Route exact path='/albums/:albumId/edit'>
+            <EditAlbumForm />
+          </Route> */}
+
+
 
 
         </Switch>
-  )
-}
+      {/* ) */}
+      {/* } */}
     </>
   );
 }

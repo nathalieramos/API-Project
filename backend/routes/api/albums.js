@@ -14,7 +14,7 @@ const validateAlbum = [
     check('description')
         .exists({ checkFalsey: true })
         .withMessage('Album description is required.'),
-    check('imageUrl')
+    check('previewImage')
         .exists({ checkFalsey: true })
         .withMessage('Album imageUrl is required.'),
     handleValidationErrors
@@ -22,14 +22,14 @@ const validateAlbum = [
 
 //create an album
 router.post('/', [requireAuth, validateAlbum], async (req, res, next) => {
-    const { title, description, imageUrl } = req.body;
+    const { title, description, previewImage } = req.body;
     const { user } = req;
 
     const createAlbum = await Album.create({
         userId: user.id,
         title,
         description,
-        previewImage: imageUrl,
+        previewImage,
     });
 
     return res.json(createAlbum)
